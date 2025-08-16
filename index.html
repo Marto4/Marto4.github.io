@@ -328,7 +328,7 @@
       <aside class="left">
         <div class="cover" id="cover-box" aria-hidden="false">
           <!-- Imagen de portada -->
-          <img src="assets/images/cover1.jpg" alt="Portada canción" id="cover-img" onerror="this.style.display='none'">
+          <img src="assets/Imagenes/Imagen1.jpeg" alt="Portada canción" id="cover-img" onerror="this.style.display='none'">
         </div>
 
         <div class="meta">
@@ -480,7 +480,7 @@
       });
 
       const s = songs[index];
-      coverImg.src = s.cover || 'assets/images/cover-placeholder.jpg';
+      coverImg.src = s.cover || 'assets/Imagenes/cover-placeholder.jpg';
       titleEl.textContent = s.title;
       artistEl.textContent = s.artist || '';
       longTextEl.innerHTML = s.longText || '';
@@ -547,5 +547,6 @@
   </script>
 </body>
 </html>
+
 
 
