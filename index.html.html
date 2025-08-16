@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canciones que me recuerdab a ti</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html,body { height: 100%; }
+    body {
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing:antialiased;
+      background: linear-gradient(135deg, #b08cff 0%, #6b8cff 60%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:30px;
+      color:#222;
+    }
+
+    /* Cuerpo */
+    .site {
+      width:100%;
+      max-width:1000px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+      border-radius:16px;
+      box-shadow: 0 10px 30px rgba(15,20,30,0.12);
+      overflow: hidden;
+    }
+
+    header {
+      padding:18px 26px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      border-bottom:1px solid rgba(0,0,0,0.04);
+      background: linear-gradient(90deg, rgba(255,255,255,0.65), rgba(250,250,255,0.5));
+    }
+
+    .logo {
+      width:50px;
+      height:50px;
+      border-radius:10px;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg,#e0d7ff,#ffdfe6);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      flex-shrink:0;
+    }
+
+    .logo img { width:100%; height:100%; object-fit:cover; }
+
+    header h1 {
+      font-size:1.1rem;
+      font-weight:700;
+      color:#1b1b1b;
+    }
+
+    header p.sub {
+      margin-left:auto;
+      font-size:0.85rem;
+      color:#666;
+    }
+
+    /* Diseño seccion canciones*/
+    .tabs {
+      display:flex;
+      gap:10px;
+      padding:14px 22px;
+      background: transparent;
+      border-bottom:1px dashed rgba(0,0,0,0.03);
+      overflow-x:auto;
+    }
+
+    .tab {
+      padding:8px 14px;
+      border-radius:10px;
+      background: rgba(0,0,0,0.03);
+      cursor:pointer;
+      font-weight:600;
+      font-size:0.95rem;
+      transition: transform .12s ease, background .15s ease;
+      white-space:nowrap;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .tab:hover { transform: translateY(-3px); }
+    .tab.active {
+      background: linear-gradient(90deg,#6b5ce5,#9f7df5);
+      color:white;
+      box-shadow: 0 6px 18px rgba(111,66,255,0.18);
+    }
+
+    .tab.locked {
+      background: rgba(0,0,0,0.03);
+      color:#9aa0a6;
+      cursor: pointer;
+      opacity:0.7;
+    }
+    .tab.locked .lock { font-size:0.9rem; margin-left:4px; }
+
+    /* Parte principal*/
+    .main-area {
+      display:flex;
+      gap:26px;
+      padding:30px 26px;
+      align-items:flex-start;
+    }
+
+    /* izquierda */
+    .left {
+      flex:0 0 280px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      align-items:center;
+    }
+
+    .cover {
+      width:100%;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow: 0 12px 30px rgba(16,24,40,0.08);
+      transition: transform .4s ease, box-shadow .3s ease;
+      background:#f3f3f3;
+    }
+
+    .cover img {
+      display:block;
+      width:100%;
+      height:100%;
+      aspect-ratio:1/1;
+      object-fit:cover;
+    }
+
+    .cover.playing { transform: rotate(4deg) scale(1.02); box-shadow: 0 18px 40px rgba(16,24,40,0.12); }
+
+    .meta {
+      width:100%;
+      text-align:center;
+    }
+
+    .meta h2 { font-size:1.05rem; color:#161616; margin-bottom:6px; }
+    .meta p.artist { color:#666; font-size:0.92rem; margin-bottom:8px; }
+
+    /* Botones */
+    .controls {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:center;
+    }
+
+    .btn {
+      padding:10px 14px;
+      border-radius:999px;
+      border: none;
+      cursor:pointer;
+      background: white;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      transition: transform .12s ease, box-shadow .12s;
+      font-weight:700;
+    }
+
+    .btn:active { transform: translateY(1px); }
+    .btn.primary {
+      background: linear-gradient(90deg,#6b5ce5,#9f7df5);
+      color:#fff;
+    }
+
+    /* Derecha */
+    .right {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .right .title-row {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .right h3 { font-size:1.2rem; margin-bottom:6px; color:#0e0e0e; }
+    .right p.lead { color:#444; line-height:1.6; }
+
+    .description {
+      padding:16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,250,255,0.98));
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,0.03);
+      box-shadow: 0 6px 18px rgba(8,12,20,0.03);
+      max-height:320px;
+      overflow:auto;
+      font-size:0.98rem;
+      color:#333;
+    }
+
+    /* Reproductor */
+    .audio-wrap {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:8px;
+      background: rgba(245,245,255,0.6);
+      padding:10px;
+      border-radius:10px;
+    }
+
+    .audio-wrap audio {
+      width:100%;
+      outline:none;
+    }
+
+    /* Mensaje de bloqueo */
+    .modal {
+      position: fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,0.35);
+      z-index:2000;
+    }
+    .modal.show { display:flex; }
+    .modal .panel {
+      width:90%;
+      max-width:420px;
+      background:white;
+      padding:18px;
+      border-radius:12px;
+      box-shadow: 0 12px 30px rgba(8,12,20,0.18);
+      text-align:center;
+    }
+    .modal .panel p { margin-bottom:16px; color:#333; }
+    .modal .panel button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#6b5ce5; color:white; font-weight:700;}
+
+    /* Parte inferior*/
+    footer {
+      padding:16px 26px;
+      font-size:0.85rem;
+      color:#666;
+      border-top:1px solid rgba(0,0,0,0.03);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    @media (max-width:900px) {
+      .main-area { flex-direction:column; padding:20px; gap:18px; }
+      .left { flex: 0 0 auto; width:100%; display:flex; flex-direction:row; align-items:center; gap:12px; }
+      .cover { width:120px; height:120px; flex-shrink:0; }
+      .meta { text-align:left; }
+    }
+    #play-btn { visibility: hidden !important; pointer-events: none; }
+
+.main-area {
+
+  align-items: center;
+}
+
+
+.tabs {
+  justify-content: center; 
+
+
+.left {
+  align-items: center;    
+  text-align: center;     
+}
+
+
+.cover {
+  width: 260px; 
+}
+
+
+.meta {
+  text-align: center;
+}
+
+
+.right {
+  text-align: center; 
+}
+.description {
+  text-align: left;       
+  margin: 0 auto;        
+  max-width: 720px;       
+
+
+.audio-wrap {
+  justify-content: center;
+}
+
+
+@media (max-width:900px) {
+  .cover { width: 120px; height: 120px; } 
+  .description { max-width: 100%; padding-right: 12px; padding-left: 12px; }
+}
+
+  </style>
+  
+</head>
+<body>
+  <div class="site" role="application" aria-label="Canciones que me recuerdan a ti">
+    <header>
+      <div class="logo" title="Logo">
+        <img src="assets/imagenes/Corazon.png" alt="Logo" id="site-logo" onerror="this.style.display='none'">
+      </div>
+      <div>
+        <h1>Canciones que me recuerdan a ti.</h1>
+        <p class="sub">Dedicadas de mí, para ti.</p>
+      </div>
+      <p class="sub" style="margin-left:auto">Para mi niña de ojitos lindos</p>
+    </header>
+
+    <!-- Canciones esqueleto -->
+    <nav class="tabs" id="tabs" aria-label="Seleccionar canción">
+    </nav>
+    <main class="main-area">
+      <!-- IZQUIERDA: Portada y controles -->
+      <aside class="left">
+        <div class="cover" id="cover-box" aria-hidden="false">
+          <!-- Imagen de portada -->
+          <img src="assets/images/cover1.jpg" alt="Portada canción" id="cover-img" onerror="this.style.display='none'">
+        </div>
+
+        <div class="meta">
+          <h2 id="song-title">Título canción</h2>
+          <p class="artist" id="song-artist">Artista / álbum</p>
+
+          <div class="controls" style="margin-top:8px;">
+            <button class="btn primary" id="play-btn" aria-label="Reproducir">Reproducir ▶</button>
+            <button class="btn" id="pause-btn" aria-label="Pausar" style="display:none">Pausar ⏸</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Derecha -->
+      <section class="right" aria-live="polite">
+        <div class="title-row">
+          <div style="flex:1">
+            <h3 id="panel-title">Para Maps, con amor, Matín</h3>
+            <p class="lead" id="panel-sub"></p>
+          </div>
+        </div>
+
+        <div class="description" id="long-text">
+          <!-- Texto (configurable por canción) -->
+          <p>Prueba
+          </p>
+        </div>
+
+        <div class="audio-wrap" style="margin-top:8px;">
+          <audio id="audio-player" controls preload="none">
+            <source id="audio-source" src="" type="audio/mpeg">
+          </audio>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>14 de agosto del 2025</div>
+      <div></div>
+    </footer>
+  </div>
+
+  
+
+  <div class="modal" id="modal">
+    
+    <div class="panel">
+      <p id="modal-msg">Esta canción no está disponible aún.</p>
+      <button id="modal-ok">Entendido</button>
+    </div>
+  </div>
+
+  
+
+  <script>
+    // canciones 
+    
+    const songs = [
+      {
+        id: 'c1',
+        title: "primera",
+        artist: "Zoe",
+        cover: "assets/imagenes/Imagen1.jpeg",
+        src: "assets/audio/Luna-Zoe.mp3", 
+        locked: false,
+        lockedMessage: "Esta canción aún no está disponible — pronto la subiré.",
+        longText: `<p>Esta es una de las canciones que me hacen pensar en ti, en donde el sentimiento que me produce
+            lleva por completo tu nombre.<br> Me parece que explica muy bien la manera en la que todo en mi cuerpo
+            reacciona cuando estás cerca; cómo te veo y siento que mi corazón se acelera, cómo el día de pronto adquiere
+            un tono distinto, cómo siento una cantidad de amor dentro de mí tan grande que no tiene espacio suficiente para 
+            salir.<br>
+            La verdad es que las palabras ya no me dan para describir la magnitud de lo que siento por ti,
+            solo sé que crece y crece dentro de mí. Me paraliza esa sensación, porque te veo y me congelo.
+            Quiero estar cerca de ti, reír contigo, jugar contigo, mirar los ojos más lindos del
+            mundo para perderme en ellos y saber que todo va a estar bien... Quiero darte un abrazo y uno de esos besos que hacen desaparecer 
+            al mundo entero, en donde solo quedamos tú y yo, y en donde siento una de las alegrías más grandes que he podido sentir
+            durante toda mi vida.<br>
+            No me alcanzan las palabras ni las acciones para demostrar mi amor, pero espero que gestos pequeños como este sirvan
+            para hacer una imagen de la magnitud de lo que en realidad siento yo por ti. 
+          </p>`
+      },
+      {
+        id: 'c2',
+        title: "Próximamente",
+        artist: "—",
+        cover: "",
+        src: "",
+        locked: true,
+        lockedMessage: "canción disponible próximamente",
+        longText: "<p></p>"
+      },
+      {
+        id: 'c3',
+        title: "Próximamente",
+        artist: "—",
+        cover: "",
+        src: "",
+        locked: true,
+        lockedMessage: "Te has ganado que tengamos un hijo por presionar jiji",
+        longText: "<p></p>"
+      }
+    ];
+
+    /* Maneja eventos */
+    const tabsEl = document.getElementById('tabs');
+    const coverImg = document.getElementById('cover-img');
+    const coverBox = document.getElementById('cover-box');
+    const titleEl = document.getElementById('song-title');
+    const artistEl = document.getElementById('song-artist');
+    const longTextEl = document.getElementById('long-text');
+    const audioPlayer = document.getElementById('audio-player');
+    const audioSource = document.getElementById('audio-source');
+    const playBtn = document.getElementById('play-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const modal = document.getElementById('modal');
+    const modalMsg = document.getElementById('modal-msg');
+    const modalOk = document.getElementById('modal-ok');
+
+    let activeIndex = 0;
+
+   
+
+    function buildTabs() {
+      tabsEl.innerHTML = '';
+      songs.forEach((s, i) => {
+        const div = document.createElement('div');
+        div.className = 'tab' + (s.locked ? ' locked' : '') + (i===0 && !s.locked ? ' active' : '');
+        div.setAttribute('data-index', i);
+        div.innerHTML = `<span class="label">${s.title}</span>${s.locked ? '<span class="lock">🔒</span>' : ''}`;
+        div.addEventListener('click', () => onTabClick(i));
+        tabsEl.appendChild(div);
+      });
+    }
+
+    function onTabClick(index) {
+      const s = songs[index];
+      if (s.locked) {
+        modalMsg.innerHTML = s.lockedMessage || "Esta canción no está disponible.";
+        modal.classList.add('show');
+        return;
+      }
+      selectSong(index);
+    }
+
+    function selectSong(index) {
+      activeIndex = index;
+      document.querySelectorAll('.tab').forEach((el, i) => {
+        el.classList.toggle('active', i === index && !songs[i].locked);
+      });
+
+      const s = songs[index];
+      coverImg.src = s.cover || 'assets/images/cover-placeholder.jpg';
+      titleEl.textContent = s.title;
+      artistEl.textContent = s.artist || '';
+      longTextEl.innerHTML = s.longText || '';
+
+      
+      if (s.src) {
+        audioSource.src = s.src;
+        audioPlayer.load();
+       
+      } else {
+        audioSource.src = "";
+        audioPlayer.load();
+      }
+      
+      coverBox.classList.remove('playing');
+      playBtn.style.display = s.src ? '' : 'none';
+      pauseBtn.style.display = 'none';
+    }
+
+    
+    playBtn.addEventListener('click', () => {
+      if (!audioPlayer.src) return;
+      audioPlayer.play().catch(()=>{ /* bloqueo autoplay navegador */});
+    });
+    pauseBtn.addEventListener('click', () => audioPlayer.pause());
+
+    // actualizar botones según estado del audio
+    audioPlayer.addEventListener('play', () => {
+      coverBox.classList.add('playing');
+      playBtn.style.display = 'none';
+      pauseBtn.style.display = '';
+    });
+    audioPlayer.addEventListener('pause', () => {
+      coverBox.classList.remove('playing');
+      playBtn.style.display = '';
+      pauseBtn.style.display = 'none';
+    });
+    audioPlayer.addEventListener('ended', () => {
+      coverBox.classList.remove('playing');
+      playBtn.style.display = '';
+      pauseBtn.style.display = 'none';
+    });
+
+    modalOk.addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+
+    // Si el usuario navega por pestañas con teclado
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') {
+        let next = (activeIndex + 1) % songs.length;
+        onTabClick(next);
+      } else if (e.key === 'ArrowLeft') {
+        let prev = (activeIndex - 1 + songs.length) % songs.length;
+        onTabClick(prev);
+      }
+    });
+
+    // Iniciar
+    buildTabs();
+    // seleccionar la primera canción disponible
+    let firstAvailable = songs.findIndex(s => !s.locked);
+    if (firstAvailable === -1) firstAvailable = 0;
+    selectSong(firstAvailable);
+  </script>
+</body>
+</html>
